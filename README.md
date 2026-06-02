@@ -1,109 +1,105 @@
-# os-seed
+# mylexaproOS
 
-A bare-metal operating system built from scratch — no libraries, no OS underneath,
-just assembly code talking directly to hardware. This is my hands-on journey into
-how computers actually work at the lowest level.
+mylexaproOS is a small 32‑bit x86 operating system built entirely from scratch.  
+There is no underlying OS, no standard library, and no runtime support.  
+The system boots from a custom 512‑byte boot sector, switches the CPU into protected mode, and executes a freestanding C kernel at physical address 0x8000.
 
----
-
-**Version:** v1.3.0 — "Interrupt Descriptor Table"
-
-The OS currently:
-
-- Boots from a custom 512-byte boot sector written in x86 assembly
-- Uses BIOS interrupt int 0x13 to load the kernel from disk into memory
-- Sets up a Global Descriptor Table (GDT)
-- Switches the CPU from 16-bit real mode into 32-bit protected mode
-- Jumps to a C kernel at 0x8000
-- VGA text driver with cursor tracking and newline support
-- kprintf() for formatted output (%d, %x, %s)
-- IDT loaded with interrupt handlers
-- Built with a Makefile — single `make run` command to build and launch
+This project exists to understand how computers actually work at the hardware and architectural level.
 
 ---
 
-## 🧠 What I'm Learning
+## Current Version: v1.3.0 — Interrupt Descriptor Table
 
-- What actually happens between pressing power and seeing an OS
-- How the BIOS loads the first 512 bytes of a drive into RAM at address 0x7C00
-- What real mode is and why every x86 CPU starts there
-- How BIOS interrupts work (ringing a bell to ask the BIOS to do something)
-- How memory addresses and hexadecimal relate to physical RAM
-- How to write and assemble x86 assembly with NASM
-- How to test bare-metal code with QEMU without real hardware
+The operating system currently includes:
 
----
+- A custom boot sector written in x86 assembly
+- BIOS disk loading using `int 0x13`
+- A Global Descriptor Table (GDT) for protected mode
+- A full 16‑bit → 32‑bit protected mode transition
+- A freestanding C kernel loaded at 0x8000
+- A VGA text‑mode driver with cursor tracking and newline handling
+- A minimal `kprintf()` implementation supporting `%d`, `%x`, `%s`, and `%%`
+- An initialized Interrupt Descriptor Table (IDT)
+- Assembly ISR stubs for CPU exceptions
+- A Makefile that builds and runs the system with `make run`
 
-## 🗂️ Project Structure
-```
-boot.asm     → 512-byte bootloader, loads kernel, switches to protected mode
-kernel.c     → C kernel, kmain() entry point
-vga.h        → VGA driver header, function declarations
-vga.c        → VGA driver implementation, cursor tracking
-linker.ld    → tells linker where to place code in memory
-Makefile     → builds and runs everything with a single command
-kprintf.h    → kprintf() header, variadic function declaration
-kprintf.c    → kprintf() implementation, number-to-string conversion
-idt.h        → IDT structures and function declarations
-idt.c        → IDT initialization and gate setup
-isr.asm      → Interrupt service routine stubs in assembly
-```
----
-
-## 🧭 Roadmap
-
-### ✔️ Completed
-
-- Set up the Interrupt Descriptor Table (IDT)
-- Implement a printf function for formatted output
-- Add a proper VGA text driver with cursor support
-- Load and Call a C kernel (kmain)
-
-### 🔜 Next Steps
-
-- Handle keyboard interrupts
-- Remap the Programmable Interrupt Controller (PIC)
-- Implement memory detection
-- Add basic memory management
-- Build a simple shell
-
-### 📅 Later
-
-- Memory paging
-- Userland processes
-- Filesystem support
-- Rust kernel modules
+All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
 
 ---
 
-## 📝 Versioning
+## What I'm Learning
 
-- v0.1.x — old experiments (scrapped, clean slate taken)
-- v0.2.0 — minimal boot sector, prints "Hi" using BIOS interrupt
-- v0.2.1 — print loop, prints full string using BIOS interrupt
-- v0.3.0 — direct VGA write, no BIOS, hot pink text, screen clear
-- v0.4.0 — protected mode, GDT, 32-bit, full string in hot pink
-- v1.0.0 — C kernel boots, kmain() called from bootloader
-- v1.1.0 — VGA text driver, multiple files, cursor tracking, newlines
-- v1.2.0 — kprintf() with %d, %x, %s format specifiers
-- v1.3.0 — IDT setup, interrupt handlers, ISR stubs in assembly
+- The complete boot process from power‑on to kernel execution
+- How BIOS loads the first 512 bytes of a disk to 0x7C00
+- How real mode works and why x86 CPUs always start there
+- How to write and assemble x86 code with NASM
+- How segmentation and descriptor tables function in protected mode
+- How to write C code without a standard library or runtime
+- How to test bare‑metal software using QEMU
 
 ---
 
-## 📸 Screenshots
+## Project Structure
+
+boot.asm      → 512‑byte bootloader, disk loading, protected‑mode switch
+kernel.c      → Kernel entry point (kmain)
+vga.h/.c      → VGA text‑mode driver
+kprintf.h/.c  → Minimal printf implementation
+idt.h/.c      → IDT setup and descriptor configuration
+isr.asm       → ISR stubs for CPU exceptions
+linker.ld     → Memory layout (boot at 0x7C00, kernel at 0x8000)
+Makefile      → Build and run automation
+
+---
+
+## Roadmap
+
+### Completed
+- Boot sector and protected‑mode transition
+- GDT setup
+- C kernel execution at 0x8000
+- VGA text driver with cursor support
+- `kprintf()` with integer and hex formatting
+- IDT initialization and ISR stubs
+
+### In Progress
+- Hardware interrupt support
+- PIC remapping
+- Keyboard input handling
+
+### Planned
+- Memory map detection (E820)
+- Physical memory allocator
+- Paging and virtual memory
+- Improved keyboard driver
+- Kernel panic screen
+- Basic shell
+
+---
+
+## Version History
+
+- v0.2.x — BIOS printing experiments
+- v0.3.x — Direct VGA text output
+- v0.4.x — Protected mode and GDT
+- v1.0.0 — C kernel boots at 0x8000
+- v1.1.0 — VGA driver with cursor and newlines
+- v1.2.0 — `kprintf()` with %d/%x/%s
+- v1.3.0 — IDT setup and ISR stubs
+
+---
+
+## Screenshots
 
 ### v1.3.0 — Interrupt Descriptor Table loaded
 ![IDT](screenshots/v1.3.0-idt.png)
 
-> Full screenshot history available in the [screenshots folder](screenshots/)
+Additional screenshots are available in the `screenshots/` directory.
 
 ---
 
-## 💬 About This Project
+## About This Project
 
-os-seed is a long-term learning project. I'm autistic and learn best by building
-real things, so this repo documents my actual progression — every commit is a
-working state I understand, not just code I copied.
-
-The goal isn't to ship a production OS. The goal is to genuinely understand how
-computers work from the ground up.
+mylexaproOS is a long‑term learning project.  
+Every commit represents a working state that I fully understand.  
+The goal is not to build a production operating system, but to gain a deep, practical understanding of how CPUs, memory, interrupts, and low‑level software actually work.

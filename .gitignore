@@ -1,4 +1,24 @@
+# ------------------------------------------------------------
+# File: .gitignore
+# Project: mylexaproOS (x86 kernel)
+# Author: Annabelle Webb
+# Created: 2026-04-18
+# Description:
+#   Ignore build artifacts and compiler outputs generated
+#   during kernel compilation. Source files remain tracked.
+# ------------------------------------------------------------
+
+# Binary Files
 *.bin
+
+# Object Files
 *.o
+
+# ELF Outputs
 *.elf
+
+# Duplicate Pattern (still valid)
 *.bin
+
+# Backups
+*.save
