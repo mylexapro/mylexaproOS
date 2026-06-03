@@ -8,9 +8,9 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.3.0 — Interrupt Descriptor Table
+## Current Version: v1.4.0 — Basic Keyboard Driver + PIC Remapping
 
-The operating system currently includes:
+The operating system now includes:
 
 - A custom boot sector written in x86 assembly
 - BIOS disk loading using `int 0x13`
@@ -21,6 +21,8 @@ The operating system currently includes:
 - A minimal `kprintf()` implementation supporting `%d`, `%x`, `%s`, and `%%`
 - An initialized Interrupt Descriptor Table (IDT)
 - Assembly ISR stubs for CPU exceptions
+- **PIC remapping and hardware IRQ handling**
+- **Basic PS/2 keyboard driver (letters, numbers, basic symbols, spacebar)**  
 - A Makefile that builds and runs the system with `make run`
 
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
@@ -41,14 +43,17 @@ All components are written to be fully freestanding and do not rely on libc or B
 
 ## Project Structure
 
-boot.asm      → 512‑byte bootloader, disk loading, protected‑mode switch
-kernel.c      → Kernel entry point (kmain)
-vga.h/.c      → VGA text‑mode driver
-kprintf.h/.c  → Minimal printf implementation
-idt.h/.c      → IDT setup and descriptor configuration
-isr.asm       → ISR stubs for CPU exceptions
-linker.ld     → Memory layout (boot at 0x7C00, kernel at 0x8000)
-Makefile      → Build and run automation
+boot.asm        → 512‑byte bootloader, disk loading, protected‑mode switch
+kernel.c        → Kernel entry point (kmain)
+vga.h/.c        → VGA text‑mode driver
+kprintf.h/.c    → Minimal printf implementation
+idt.h/.c        → IDT setup and descriptor configuration
+isr.asm         → ISR stubs for CPU exceptions
+pic.h/.c        → PIC remapping and hardware IRQ initialization
+keyboard.h/.c   → Basic PS/2 keyboard driver (scancodes → ASCII)
+io.h            → Port I/O helpers (inb/outb wrappers)
+linker.ld       → Memory layout (boot at 0x7C00, kernel at 0x8000)
+Makefile        → Build and run automation
 
 ---
 
@@ -61,17 +66,17 @@ Makefile      → Build and run automation
 - VGA text driver with cursor support
 - `kprintf()` with integer and hex formatting
 - IDT initialization and ISR stubs
+- PIC remapping
+- Basic keyboard driver (letters, numbers, symbols, space)
 
 ### In Progress
-- Hardware interrupt support
-- PIC remapping
-- Keyboard input handling
+- Improved keyboard driver (Shift, Caps Lock, numpad)
+- Hardware IRQ expansion
 
 ### Planned
 - Memory map detection (E820)
 - Physical memory allocator
 - Paging and virtual memory
-- Improved keyboard driver
 - Kernel panic screen
 - Basic shell
 
@@ -86,13 +91,14 @@ Makefile      → Build and run automation
 - v1.1.0 — VGA driver with cursor and newlines
 - v1.2.0 — `kprintf()` with %d/%x/%s
 - v1.3.0 — IDT setup and ISR stubs
+- v1.4.0 — PIC remapping + basic keyboard driver
 
 ---
 
 ## Screenshots
 
-### v1.3.0 — Interrupt Descriptor Table loaded
-![IDT](screenshots/v1.3.0-idt.png)
+### v1.4.0 — Basic Keyboard Driver
+![Keyboard Driver](screenshots/v1.4.0-keyboard-driver.png)
 
 Additional screenshots are available in the `screenshots/` directory.
 
