@@ -9,6 +9,7 @@
 ------------------------------------------------------------ */
 
 #include "kprintf.h"
+#include "vga.h"
 #include <stdint.h>
 
 /* US keyboard scancode map 
@@ -32,6 +33,26 @@ static const char scancode_map[128] = {
     0,   0,   0,   0,   0,   0,   0,   0               /* 0x78 - 0x7F */
 };
 
+/* Shifted US keyboard scancode map - same structure but returns shifted characters */
+static const char shift_map[128] = {
+   0,   0,  '!', '@', '#', '$', '%', '^', '&', '*',  /* 0x00 - 0x09 */
+    '(', ')', '_', '+',  0,   0,  'Q', 'W', 'E', 'R',  /* 0x0A - 0x13 */
+    'T', 'Y', 'U', 'I', 'O', 'P', '{', '}',  0,   0,   /* 0x14 - 0x1D */
+    'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',  /* 0x1E - 0x27 */
+    '"', '~',  0,  '|', 'Z', 'X', 'C', 'V', 'B', 'N',  /* 0x28 - 0x31 */
+    'M', '<', '>', '?',  0,  '*',  0,  ' ',  0,   0,   /* 0x32 - 0x3B */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x3C - 0x45 */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x46 - 0x4F */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x50 - 0x59 */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x5A - 0x63 */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x64 - 0x6D */
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    /* 0x6E - 0x77 */
+    0,   0,   0,   0,   0,   0,   0,   0               /* 0x78 - 0x7F */
+};
+
+/* Tracks whether shift is currently held down 1 = held, 0 = not held */
+static int shift_held = 0;
+
 /* Local inb helper: reads a byte from an I/O port */
 static inline uint8_t inb(uint16_t port) {
 	uint8_t ret;
@@ -45,13 +66,37 @@ static inline uint8_t inb(uint16_t port) {
 void keyboard_handler(void) {
 	uint8_t scancode = inb(0x60);
 
+   /* shift pressed */
+   if (scancode == 0x2A || scancode == 0x36) {
+      shift_held = 1;
+      return;
+   }
+
+   /* shift released - break codes for left/right shift */
+   if (scancode == 0xAA || scancode == 0xB6) {
+      shift_held = 0;
+      return;
+   }
+
 	/* ignore break codes (key release events) */
 	if (scancode >= 128) return;
 
-	/* look up the character in map */
-	char c = scancode_map[scancode];
+   /* enter key - move to next line */
+   if (scancode == 0x1C) {
+      kprintf("\n");
+      return;
+   }
 
-	/* only print if its a printable character */
+   /* backspace - move cursor back and erase */
+   if (scancode == 0x0E) {
+      vga_backspace();
+      return;
+   }
+
+	/* look up the character in map */
+	char c = shift_held ? shift_map[scancode] : scancode_map[scancode];
+
+	/* print if printable */
 	if (c != 0) {
 		kprintf("%c", c);
 	}

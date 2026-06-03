@@ -23,12 +23,7 @@
  *   are preserved.
  */
 void pic_remap(void) {
-	uint8_t a1, a2;
-
-	/* Save current interrupt masks */
-	a1 = inb(PIC1_DATA);
-	a2 = inb(PIC2_DATA);
-
+	
 	/* Start initialization sequence (cascade mode, expect ICW4) */
 	outb(PIC1_COMMAND, ICW1_INIT | ICW1_ICW4);
 	outb(PIC2_COMMAND, ICW1_INIT | ICW1_ICW4);
@@ -45,7 +40,7 @@ void pic_remap(void) {
 	outb(PIC1_DATA, ICW4_8086);
 	outb(PIC2_DATA, ICW4_8086);
 
-	/* Restore saved masks */
+	/* Unmask IRQ1 (keyboard) only, mask everything else */
 	outb(PIC1_DATA, 0xFD);
 	outb(PIC2_DATA, 0xFF);
 }

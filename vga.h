@@ -27,6 +27,7 @@
 void vga_clear(void);
 void vga_putchar(char c, int x, int y, uint8_t color);
 void vga_print(const char *str, uint8_t color);
+void vga_backspace(void);
 
 #endif
 

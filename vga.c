@@ -55,3 +55,14 @@ void vga_print(const char *str, uint8_t color) {
 		str++;
 	}
 }
+
+/* vag_backspace: moves the cursor back one position and erases the character by writing a space
+   Does nothing if already at the start of a line. */
+void vga_backspace(void) {
+
+	/* don't go past the beginning of the line */
+	if (cursor_x > 0) {
+		cursor_x--;
+		vga_putchar(' ', cursor_x, cursor_y, VGA_COLOR_BLACK);
+	}
+}

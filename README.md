@@ -8,11 +8,11 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.4.0 — Basic Keyboard Driver + PIC Remapping
+## Current Version: v1.4.1 — Keyboard Improvements
 
 The operating system now includes:
 
-- A custom boot sector written in x86 assembly
+- A custom boot sector written in x86 assembly 
 - BIOS disk loading using `int 0x13`
 - A Global Descriptor Table (GDT) for protected mode
 - A full 16‑bit → 32‑bit protected mode transition
@@ -22,7 +22,7 @@ The operating system now includes:
 - An initialized Interrupt Descriptor Table (IDT)
 - Assembly ISR stubs for CPU exceptions
 - **PIC remapping and hardware IRQ handling**
-- **Basic PS/2 keyboard driver (letters, numbers, basic symbols, spacebar)**  
+- **PS/2 keyboard driver with shift, enter, backspace, and symbol support** 
 - A Makefile that builds and runs the system with `make run`
 
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
@@ -60,6 +60,7 @@ Makefile        → Build and run automation
 ## Roadmap
 
 ### Completed
+- Improved keyboard driver (Shift, Caps Lock, numpad)
 - Boot sector and protected‑mode transition
 - GDT setup
 - C kernel execution at 0x8000
@@ -70,7 +71,6 @@ Makefile        → Build and run automation
 - Basic keyboard driver (letters, numbers, symbols, space)
 
 ### In Progress
-- Improved keyboard driver (Shift, Caps Lock, numpad)
 - Hardware IRQ expansion
 
 ### Planned
@@ -92,13 +92,14 @@ Makefile        → Build and run automation
 - v1.2.0 — `kprintf()` with %d/%x/%s
 - v1.3.0 — IDT setup and ISR stubs
 - v1.4.0 — PIC remapping + basic keyboard driver
+- v1.4.1 — Shift, enter, backspace, clean build warnings fixed
 
 ---
 
 ## Screenshots
 
-### v1.4.0 — Basic Keyboard Driver
-![Keyboard Driver](screenshots/v1.4.0-keyboard-driver.png)
+### v1.4.1 — Keyboard with shift, enter, backspace
+![Keyboard v1.4.1](screenshots/v1.4.1-keyboard-shift-backspace.png)
 
 Additional screenshots are available in the `screenshots/` directory.
 
