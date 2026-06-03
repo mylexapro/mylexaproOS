@@ -90,6 +90,12 @@ void kprintf(const char *fmt, ...) {
 				case '%':
 					vga_print("%", VGA_COLOR_PINK);
 					break;
+				case 'c': {
+					char c = (char)va_arg(args, int);
+					char str[2] = {c, '\0'};
+					vga_print(str, VGA_COLOR_PINK);
+					break;
+				}
 			}
 		} else {
 			char c[2] = {*fmt, '\0'};
