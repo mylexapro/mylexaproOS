@@ -81,6 +81,7 @@ memory.c        → Memory map reader and printer
 
 ### In Progress
 - Hardware IRQ expansion
+- Timer Driver (IRQ 0)
 
 ### Planned
 - Physical memory allocator
