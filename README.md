@@ -47,6 +47,7 @@ All components are written to be fully freestanding and do not rely on libc or B
 
 ## Project Structure
 
+```
 boot.asm        → 512‑byte bootloader, disk loading, protected‑mode switch
 kernel.c        → Kernel entry point (kmain)
 vga.h/.c        → VGA text‑mode driver
@@ -60,6 +61,7 @@ linker.ld       → Memory layout (boot at 0x7C00, kernel at 0x8000)
 Makefile        → Build and run automation
 memory.h        → E820 structures and memory map declarations
 memory.c        → Memory map reader and printer
+```
 
 ---
 
