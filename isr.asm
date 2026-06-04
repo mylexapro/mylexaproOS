@@ -15,37 +15,28 @@ global isr0
 global isr1
 global isr33
 
-; -------------------------
 ; CPU Exception: Divide-by-zero (#0)
-; -------------------------
 isr0:
 	cli
 	push byte 0
 	push byte 0
 	jmp isr_common
 
-; -------------------------
 ; CPU Exception: Debug (#1)
-; -------------------------
 isr1:
 	cli
 	push byte 0
 	push byte 1
 	jmp isr_common
 
-; -------------------------
 ; Hardware IRQ1: Keyboard (mapped to interrupt 33)
-; -------------------------
 isr33:
 	cli
 	push byte 0
 	push byte 33
 	jmp isr_common_kb
 
-; -------------------------
-; Keyboard-specific ISR handler
-; Calls keyboard_handler() in C
-; -------------------------
+; Keyboard-specific ISR handler calls keyboard_handler() in C
 isr_common_kb:
 	pusha
 
@@ -59,11 +50,8 @@ isr_common_kb:
 	add esp, 8			; remove pushed interrupt number + error code
 	iret
 
-; -------------------------
-; Generic ISR handler for exceptions
-; Saves segment registers, switches to kernel segments,
+; Generic ISR handler for exceptions, saves segment registers, switches to kernel segments, 
 ; then restores everything and returns.
-; -------------------------
 isr_common:
 	pusha
 	push ds

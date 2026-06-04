@@ -1,14 +1,14 @@
 /* ------------------------------------------------------------
- * File: pic.h
- * Project: mylexaproOS (x86 kernel)
- * Author: Annabelle Webb
- * Created: 2026-04-18
- * Description:
- *   Definitions and constants for the 8259 Programmable
- *   Interrupt Controller (PIC). Provides port addresses,
- *   initialization command words, and function prototypes
- *   for remapping and sending EOIs.
- * ------------------------------------------------------------ */
+File: pic.h
+Project: mylexaproOS (x86 kernel)
+Author: Annabelle Webb
+Created: 2026-04-18
+Description:
+  Definitions and constants for the 8259 Programmable
+  Interrupt Controller (PIC). Provides port addresses,
+  initialization command words, and function prototypes
+  for remapping and sending EOIs.
+------------------------------------------------------------ */
 
 #ifndef PIC_H
 #define PIC_H

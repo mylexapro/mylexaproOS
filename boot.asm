@@ -18,14 +18,42 @@ start:
 	mov es, ax
 	mov bx, 0
 
-	mov ah, 0x02	; BIOS disk read function
-	mov al, 10		; number of sectors
-	mov ch, 0		; cylinder
-	mov cl, 2		; sector (starts at 1, so 2 = second sector)
-	mov dh, 0		; head
-	int 0x13		; BIOS disk interrupt
+	mov ah, 0x02				; BIOS disk read function
+	mov al, 10					; number of sectors
+	mov ch, 0					; cylinder
+	mov cl, 2					; sector (starts at 1, so 2 = second sector)
+	mov dh, 0					; head
+	int 0x13					; BIOS disk interrupt
 
-	cli				; disable interrupts before mode switch
+	; E820 memory map detection
+	; Store count at 0x4FC, entries starting at 0x500
+	mov di, 0x500				; ES is still 0x0800 from disk load - reset it to 0 first
+
+	xor ax, ax
+	mov es, ax					; ES = 0, so es:di = 0x0000:0x0500 = 0x500
+	mov di, 0x500
+
+	xor ebx, ebx				; start of list
+	xor bp, bp 					; entry count
+
+.e820_loop:
+	mov eax, 0xE820
+	mov ecx, 24
+	mov edx, 0x534D4150			; "SMAP"
+	int 0x15
+
+	jc .e820_done				; carry flag set = error or e820_done
+	cmp ebx, 0
+	je .e820_done				; ebx = 0 means last entry
+
+	inc bp						; count this entry
+	add di, 24					; move to next slot
+	jmp .e820_loop
+	
+.e820_done:
+	mov [0x4FC], bp				; store entry count
+
+	cli							; disable interrupts before mode switch
 	lgdt [gdt_descriptor]
 
 	; Enter protected mode 

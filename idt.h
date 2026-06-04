@@ -1,13 +1,13 @@
 /* ------------------------------------------------------------
- * File: idt.h
- * Project: mylexaproOS (x86 kernel)
- * Author: Annabelle Webb
- * Created: 2026-04-18
- * Description:
- *   Definitions for the Interrupt Descriptor Table (IDT),
- *   including the IDT entry structure, IDT pointer structure,
- *   and initialization functions used by idt.c.
- * ------------------------------------------------------------ */
+File: idt.h
+Project: mylexaproOS (x86 kernel)
+Author: Annabelle Webb
+Created: 2026-04-18
+Description:
+   Definitions for the Interrupt Descriptor Table (IDT),
+   including the IDT entry structure, IDT pointer structure,
+   and initialization functions used by idt.c.
+------------------------------------------------------------ */
 
 #ifndef IDT_H
 #define IDT_H

@@ -8,7 +8,7 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.4.1 — Keyboard Improvements
+## Current Version: v1.5.0 — E820 Memory Map
 
 The operating system now includes:
 
@@ -21,8 +21,12 @@ The operating system now includes:
 - A minimal `kprintf()` implementation supporting `%d`, `%x`, `%s`, and `%%`
 - An initialized Interrupt Descriptor Table (IDT)
 - Assembly ISR stubs for CPU exceptions
-- **PIC remapping and hardware IRQ handling**
-- **PS/2 keyboard driver with shift, enter, backspace, and symbol support** 
+- PIC remapping and hardware IRQ handling
+- PS/2 keyboard driver with shift, enter, backspace, and symbol support
+- **E820 memory map detected in real mode before protected mode switch**
+- **Memory regions displayed at boot showing base, length, and type**
+- **Linker script updated with proper segment permissions (no RWX)**
+- **Hardware VGA cursor disabled**
 - A Makefile that builds and runs the system with `make run`
 
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
@@ -54,13 +58,16 @@ keyboard.h/.c   → Basic PS/2 keyboard driver (scancodes → ASCII)
 io.h            → Port I/O helpers (inb/outb wrappers)
 linker.ld       → Memory layout (boot at 0x7C00, kernel at 0x8000)
 Makefile        → Build and run automation
+memory.h        → E820 structures and memory map declarations
+memory.c        → Memory map reader and printer
 
 ---
 
 ## Roadmap
 
 ### Completed
-- Improved keyboard driver (Shift, Caps Lock, numpad)
+- Memory map detection (E820)
+- Improved keyboard driver (Shift, enter, backspace, shift symbols)
 - Boot sector and protected‑mode transition
 - GDT setup
 - C kernel execution at 0x8000
@@ -74,7 +81,6 @@ Makefile        → Build and run automation
 - Hardware IRQ expansion
 
 ### Planned
-- Memory map detection (E820)
 - Physical memory allocator
 - Paging and virtual memory
 - Kernel panic screen
@@ -93,13 +99,14 @@ Makefile        → Build and run automation
 - v1.3.0 — IDT setup and ISR stubs
 - v1.4.0 — PIC remapping + basic keyboard driver
 - v1.4.1 — Shift, enter, backspace, clean build warnings fixed
+- v1.5.0 — E820 memory detection, proper linker segments, cursor disabled
 
 ---
 
 ## Screenshots
 
-### v1.4.1 — Keyboard with shift, enter, backspace
-![Keyboard v1.4.1](screenshots/v1.4.1-keyboard-shift-backspace.png)
+### v1.5.0 — E820 Memory Map
+![Memory Map](screenshots/v1.5.0-memory-map.png)
 
 Additional screenshots are available in the `screenshots/` directory.
 

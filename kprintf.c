@@ -1,12 +1,12 @@
 /* ------------------------------------------------------------
- * File: kprintf.c
- * Project: mylexaproOS (x86 kernel)
- * Author: Annabelle Webb
- * Created: 2026-04-18
- * Description:
- *   Minimal printf-style formatting for VGA text mode output.
- *   Supports %d, %x, %s, and %% using vga_print() as the backend.
- * ------------------------------------------------------------ */
+File: kprintf.c
+Project: mylexaproOS (x86 kernel)
+Author: Annabelle Webb
+Created: 2026-04-18
+Description:
+  Minimal printf-style formatting for VGA text mode output.
+  Supports %d, %x, %s, and %% using vga_print() as the backend.
+------------------------------------------------------------ */
 
 #include "vga.h"
 #include <stdarg.h>
@@ -59,17 +59,14 @@ static void print_hex(unsigned int num) {
 	}
 }
 
-/*
- * kprintf:
- *   Lightweight kernel printf implementation.
- *   Supported:
- *     %d  - decimal integer
- *     %x  - hexadecimal integer
- *     %s  - C-string
- *     %%  - literal '%'
- *
- *   Uses vga_print() for all output.
- */
+/* kprintf: Lightweight kernel printf implementation.
+Supported:
+	%d  - decimal integer
+	%x  - hexadecimal integer
+	%s  - C-string
+	%%  - literal '%'
+Uses vga_print() for all output.
+*/
 void kprintf(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);

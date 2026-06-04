@@ -1,13 +1,13 @@
 /* ------------------------------------------------------------
- * File: vga.c
- * Project: mylexaproOS (x86 kernel)
- * Author: Annabelle Webb
- * Created: 2026-04-18
- * Description:
- *   Simple VGA text-mode driver. Provides screen clearing,
- *   character output, and string printing with a software
- *   cursor. Uses the VGA memory buffer at 0xB8000.
- * ------------------------------------------------------------ */
+File: vga.c
+Project: mylexaproOS (x86 kernel)
+Author: Annabelle Webb
+Created: 2026-04-18
+Description:
+  Simple VGA text-mode driver. Provides screen clearing,
+  character output, and string printing with a software
+  cursor. Uses the VGA memory buffer at 0xB8000.
+------------------------------------------------------------ */
 
 #include "vga.h"
 
@@ -65,4 +65,15 @@ void vga_backspace(void) {
 		cursor_x--;
 		vga_putchar(' ', cursor_x, cursor_y, VGA_COLOR_BLACK);
 	}
+}
+
+/* vga_diable_cursor: Disables the hardware VGA blinking cursor by writing to the cursor start register via VGA control ports.
+	The cursor is seperate from software cursor and needs to be explicity disabled through port I/O. */
+void vga_disable_cursor(void) {
+	__asm__ __volatile__(
+		"outb %0, %1" : : "a"((uint8_t)0x0A), "Nd"((uint16_t)0x3D4)
+	);
+	__asm__ __volatile__(
+		"outb %0, %1" : : "a"((uint8_t)0x20), "Nd"((uint16_t)0x3D5)
+	);
 }
