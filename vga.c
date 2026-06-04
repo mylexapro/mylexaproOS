@@ -77,3 +77,34 @@ void vga_disable_cursor(void) {
 		"outb %0, %1" : : "a"((uint8_t)0x20), "Nd"((uint16_t)0x3D5)
 	);
 }
+
+/* vga_print_at: prints a string at a specific x,y position without moving the main software cursor */
+void vga_print_at(const char *str, int x, int y, uint8_t color) {
+	while (*str) {
+		vga_putchar(*str, x, y, color);
+		x++;
+		str++;
+	}
+}
+
+/* vga_print_number_at: prints a single digit number at x,y without moving the main software cursor */
+void vga_print_number_at(uint32_t num, int x, int y, uint8_t color) {
+	char buf[12];
+	int i = 0;
+
+	if (num == 0) {
+		vga_putchar('0', x, y, color);
+		return;
+	}
+
+	while (num > 0) {
+		buf[i++] = '0' + (num % 10);
+		num /= 10;
+	}
+
+	/* print digits in correct order */
+	for (int j = i - 1; j >= 0; j--) {
+		vga_putchar(buf[j], x, y, color);
+		x++;
+	}
+}

@@ -8,7 +8,7 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.5.0 — E820 Memory Map
+## Current Version: v1.6.0 — Timer Driver
 
 The operating system now includes:
 
@@ -27,6 +27,8 @@ The operating system now includes:
 - **Memory regions displayed at boot showing base, length, and type**
 - **Linker script updated with proper segment permissions (no RWX)**
 - **Hardware VGA cursor disabled**
+- **Timer driver (IRQ 0) with uptime counter in top right corner**
+- **IRQ0 and IRQ1 both active and handled**
 - A Makefile that builds and runs the system with `make run`
 
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
@@ -61,6 +63,7 @@ linker.ld       → Memory layout (boot at 0x7C00, kernel at 0x8000)
 Makefile        → Build and run automation
 memory.h        → E820 structures and memory map declarations
 memory.c        → Memory map reader and printer
+timer.h/.c      → PIT timer driver, tick counter, uptime display
 ```
 
 ---
@@ -68,48 +71,52 @@ memory.c        → Memory map reader and printer
 ## Roadmap
 
 ### Completed
-- Memory map detection (E820)
-- Improved keyboard driver (Shift, enter, backspace, shift symbols)
-- Boot sector and protected‑mode transition
-- GDT setup
+- Boot sector, GDT, protected mode transition
 - C kernel execution at 0x8000
-- VGA text driver with cursor support
-- `kprintf()` with integer and hex formatting
+- VGA text driver with cursor, backspace, and position control
+- kprintf() with %d, %x, %s, %c formatting
 - IDT initialization and ISR stubs
-- PIC remapping
-- Basic keyboard driver (letters, numbers, symbols, space)
+- PIC remapping and hardware IRQ handling
+- PS/2 keyboard driver with shift, enter, backspace, symbols
+- E820 memory map detection and display
+- PIT timer driver with uptime counter (IRQ 0)
+- Proper linker segments, no RWX warnings
 
 ### In Progress
 - Hardware IRQ expansion
-- Timer Driver (IRQ 0)
+- Physical memory allocator
+
 
 ### Planned
-- Physical memory allocator
 - Paging and virtual memory
 - Kernel panic screen
 - Basic shell
-
+- Process management
+- System calls
+- Filesystem (read files from disk)
+- Rust kernel modules
 ---
 
 ## Version History
 
-- v0.2.x — BIOS printing experiments
-- v0.3.x — Direct VGA text output
-- v0.4.x — Protected mode and GDT
-- v1.0.0 — C kernel boots at 0x8000
-- v1.1.0 — VGA driver with cursor and newlines
-- v1.2.0 — `kprintf()` with %d/%x/%s
-- v1.3.0 — IDT setup and ISR stubs
-- v1.4.0 — PIC remapping + basic keyboard driver
-- v1.4.1 — Shift, enter, backspace, clean build warnings fixed
+- v1.6.0 — PIT timer driver, uptime counter, IRQ0 active
 - v1.5.0 — E820 memory detection, proper linker segments, cursor disabled
+- v1.4.1 — Keyboard improvements: shift, enter, backspace, symbols
+- v1.4.0 — PIC remapping, basic keyboard driver
+- v1.3.0 — IDT setup and ISR stubs
+- v1.2.0 — kprintf() with %d/%x/%s/%c
+- v1.1.0 — VGA driver with cursor and newlines
+- v1.0.0 — C kernel boots at 0x8000
+- v0.4.x — Protected mode and GDT
+- v0.3.x — Direct VGA text output
+- v0.2.x — BIOS printing experiments
 
 ---
 
 ## Screenshots
 
-### v1.5.0 — E820 Memory Map
-![Memory Map](screenshots/v1.5.0-memory-map.png)
+### v1.6.0 — Timer driver, uptime counter
+![Timer](screenshots/v1.6.0-timer.png)
 
 Additional screenshots are available in the `screenshots/` directory.
 

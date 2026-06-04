@@ -11,64 +11,88 @@
 
 BITS 32
 
+; export symbols so the linker can find them from C/idt.c
 global isr0
 global isr1
+global isr32
 global isr33
 
 ; CPU Exception: Divide-by-zero (#0)
+; Fires when code tries to divide by zero
 isr0:
-	cli
-	push byte 0
-	push byte 0
-	jmp isr_common
+	cli							; Disable interrupts while handling
+	push byte 0					; Dummy error code (exception has none)
+	push byte 0					; Interrupt number
+	jmp isr_common				; Jump to generic exception handler
 
 ; CPU Exception: Debug (#1)
+; Fires during single-step debugging
 isr1:
-	cli
-	push byte 0
-	push byte 1
-	jmp isr_common
+	cli							; Diable interrupts while handling
+	push byte 0					; Dummy error code
+	push byte 1					; Interrupt number
+	jmp isr_common				; Jump to generic exception handler
+
+; Hardware IRQ0: System Timer (mapped to interrupt 32)
+; Fires ~18 times per second from the PIT chip
+isr32:
+	cli							; Disable interrupts while handling
+	push byte 0					; Dummy error code (hardware IRQ has none)
+	push byte 32				; Interrupt number
+	jmp isr_common_timer		; Jump to timer-specific handler
+
+; Timer Common Handler
+; Saves registers, calls C handler, restores registers, returns
+isr_common_timer:
+	pusha						; Save all general purpose registers
+	extern timer_handler		; timer_handler is defined in timer.c
+	call timer_handler			; Calls the C timer handler
+	popa						; Restore all general purpose registers
+	add esp, 8					; Clean up 2 push bytes (2 x 4 = 8 bytes)
+	iret						; Return from interrupt
 
 ; Hardware IRQ1: Keyboard (mapped to interrupt 33)
+; Fires when key is pressed or released
 isr33:
-	cli
-	push byte 0
-	push byte 33
-	jmp isr_common_kb
+	cli							; Disable interrupts while handling
+	push byte 0					; Dummy error code
+	push byte 33				; Interrupt number
+	jmp isr_common_kb			; Jump to keyboard-specific handler
 
-; Keyboard-specific ISR handler calls keyboard_handler() in C
+; Keyboard Common Handler
+; Saves registers, calls C handler, sends EOI, restores, returns
 isr_common_kb:
-	pusha
+	pusha						; Save all general purpose registers
 
-	extern keyboard_handler
-	call keyboard_handler
+	extern keyboard_handler		; Keyboard handler is defined in keyboard.c
+	call keyboard_handler		; Call the C keyboard handler
 
-	mov al, 0x20
-	out 0x20, al
+	mov al, 0x20				; EOI (End of Interrupt) command
+	out 0x20, al				; Send EOI to master PIC (port 0x20)
 
-	popa
-	add esp, 8			; remove pushed interrupt number + error code
-	iret
+	popa						; Restore all gerneral purpose registers
+	add esp, 8					; Clean up 2 push bytes (2 x 4 = 8 bytes)
+	iret						; Return from interrupt
 
 ; Generic ISR handler for exceptions, saves segment registers, switches to kernel segments, 
 ; then restores everything and returns.
 isr_common:
-	pusha
-	push ds
-	push es
-	push fs
-	push gs
+	pusha						; Save all general purpose registers
+	push ds						; Save data segment
+	push es						; Save extra segment
+	push fs						; Save FS segment
+	push gs						; Save GS segment
 
-	mov ax, 0x10		; kernel data segment
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
+	mov ax, 0x10				; Kernel data segment selector
+	mov ds, ax					; Reload all segment registers
+	mov es, ax					; With kernel data segment
+	mov fs, ax					; To ensure were operating in
+	mov gs, ax					; Kernel memory space
 
-	popa
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	add esp, 8			; remove interrupt number + error code
-	iret
+	popa						; Restore general purpose registers
+	pop gs						; Restore GS (reverse order of push)
+	pop fs						; Restore FS
+	pop es						; Restore ES
+	pop ds						; Restore DS
+	add esp, 8					; Clean up interrupt number + error code
+	iret						; Return from interrupt

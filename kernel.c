@@ -14,16 +14,18 @@ Description:
 #include "idt.h"
 #include "pic.h"
 #include "memory.h"
+#include "timer.h"
 
 void kmain(void) {
 	vga_clear();					// Clear screen
 	vga_disable_cursor();			// Disable BIOS cursor
 	idt_init();						// Set up interrupt descriptor table
+	timer_init();					// Set up timer
 	pic_remap();					// Remap PIC to avoid CPU exception overlap
 	__asm__ __volatile__("sti");	// Enable interrupts
 
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	kprintf("          mylexaproOS  v1.5.0           \n");
+	kprintf("          mylexaproOS  v1.6.0           \n");
 	kprintf("       programming is my lexapro        \n");
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 	memory_print_map();

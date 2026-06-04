@@ -29,6 +29,8 @@ void vga_putchar(char c, int x, int y, uint8_t color);
 void vga_print(const char *str, uint8_t color);
 void vga_backspace(void);
 void vga_disable_cursor(void);
+void vga_print_at(const char *str, int x, int y, uint8_t color);
+void vga_print_number_at(uint32_t num, int x, int y, uint8_t color);
 
 #endif
 
