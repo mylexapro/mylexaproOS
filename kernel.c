@@ -15,6 +15,7 @@ Description:
 #include "pic.h"
 #include "memory.h"
 #include "timer.h"
+#include "kmalloc.h"
 
 void kmain(void) {
 	vga_clear();					// Clear screen
@@ -25,7 +26,7 @@ void kmain(void) {
 	__asm__ __volatile__("sti");	// Enable interrupts
 
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	kprintf("          mylexaproOS  v1.6.0           \n");
+	kprintf("          mylexaproOS  v1.7.0           \n");
 	kprintf("       programming is my lexapro        \n");
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 	memory_print_map();

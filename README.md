@@ -8,28 +8,23 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.6.0 — Timer Driver
+## Current Version: v1.7.0 — Physical Memory Allocator
 
 The operating system now includes:
 
-- A custom boot sector written in x86 assembly 
-- BIOS disk loading using `int 0x13`
-- A Global Descriptor Table (GDT) for protected mode
-- A full 16‑bit → 32‑bit protected mode transition
-- A freestanding C kernel loaded at 0x8000
-- A VGA text‑mode driver with cursor tracking and newline handling
-- A minimal `kprintf()` implementation supporting `%d`, `%x`, `%s`, and `%%`
-- An initialized Interrupt Descriptor Table (IDT)
-- Assembly ISR stubs for CPU exceptions
-- PIC remapping and hardware IRQ handling
+- Custom 512-byte boot sector with BIOS disk loading and E820 memory detection
+- GDT setup and full 16-bit → 32-bit protected mode transition
+- Freestanding C kernel loaded at 0x8000 with no libc or runtime support
+- VGA text-mode driver with cursor tracking, backspace, and position control
+- kprintf() supporting %d, %x, %s, %c, and %%
+- IDT with ISR stubs for CPU exceptions and hardware IRQs
+- PIC remapped, IRQ0 (timer) and IRQ1 (keyboard) both active
 - PS/2 keyboard driver with shift, enter, backspace, and symbol support
-- **E820 memory map detected in real mode before protected mode switch**
-- **Memory regions displayed at boot showing base, length, and type**
-- **Linker script updated with proper segment permissions (no RWX)**
-- **Hardware VGA cursor disabled**
-- **Timer driver (IRQ 0) with uptime counter in top right corner**
-- **IRQ0 and IRQ1 both active and handled**
-- A Makefile that builds and runs the system with `make run`
+- PIT timer driver with uptime counter displayed in top right corner
+- E820 memory map displayed at boot showing base, length, and type
+- First-fit physical memory allocator (kmalloc/kfree) with coalescing
+- Proper linker segments, no RWX warnings, hardware cursor disabled
+- Makefile — single `make run` command to build and launch
 
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
 
@@ -37,14 +32,22 @@ All components are written to be fully freestanding and do not rely on libc or B
 
 ## What I'm Learning
 
-- The complete boot process from power‑on to kernel execution
+- The complete boot process from power-on to kernel execution
 - How BIOS loads the first 512 bytes of a disk to 0x7C00
-- How real mode works and why x86 CPUs always start there
-- How to write and assemble x86 code with NASM
-- How segmentation and descriptor tables function in protected mode
-- How to write C code without a standard library or runtime
-- How to test bare‑metal software using QEMU
-
+- Real mode, protected mode, and the CPU privilege ring system
+- x86 assembly with NASM — registers, interrupts, segmentation
+- How to write freestanding C with no standard library or runtime
+- GDT, IDT, ISR stubs, and hardware interrupt handling
+- How the PIC routes hardware IRQs to the CPU
+- Direct VGA hardware access and text-mode driver design
+- PS/2 keyboard protocol and scancode translation
+- PIT timer programming and IRQ-driven uptime tracking
+- E820 BIOS memory map detection
+- Linked list data structures and first-fit memory allocation
+- Binary, hexadecimal, and memory addressing
+- Linker scripts, program headers, and segment permissions
+- How malloc and free work at the hardware level
+- Testing bare-metal software using QEMU
 ---
 
 ## Project Structure
@@ -64,6 +67,8 @@ Makefile        → Build and run automation
 memory.h        → E820 structures and memory map declarations
 memory.c        → Memory map reader and printer
 timer.h/.c      → PIT timer driver, tick counter, uptime display
+kmalloc.h       → heap allocator declarations and block_header struct
+kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
 ```
 
 ---
@@ -81,14 +86,13 @@ timer.h/.c      → PIT timer driver, tick counter, uptime display
 - E820 memory map detection and display
 - PIT timer driver with uptime counter (IRQ 0)
 - Proper linker segments, no RWX warnings
+- First-fit physical memory allocator (kmalloc/kfree)
 
 ### In Progress
 - Hardware IRQ expansion
-- Physical memory allocator
-
+- Paging and virtual memory
 
 ### Planned
-- Paging and virtual memory
 - Kernel panic screen
 - Basic shell
 - Process management
@@ -99,6 +103,7 @@ timer.h/.c      → PIT timer driver, tick counter, uptime display
 
 ## Version History
 
+- v1.7.0 — first-fit memory allocator, kmalloc/kfree, heap at 1MB
 - v1.6.0 — PIT timer driver, uptime counter, IRQ0 active
 - v1.5.0 — E820 memory detection, proper linker segments, cursor disabled
 - v1.4.1 — Keyboard improvements: shift, enter, backspace, symbols
@@ -115,8 +120,8 @@ timer.h/.c      → PIT timer driver, tick counter, uptime display
 
 ## Screenshots
 
-### v1.6.0 — Timer driver, uptime counter
-![Timer](screenshots/v1.6.0-timer.png)
+### v1.7.0 — Physical Memory Allocator
+![kmalloc](screenshots/v1.7.0-kmalloc.png)
 
 Additional screenshots are available in the `screenshots/` directory.
 
@@ -124,6 +129,9 @@ Additional screenshots are available in the `screenshots/` directory.
 
 ## About This Project
 
-mylexaproOS is a long‑term learning project.  
-Every commit represents a working state that I fully understand.  
-The goal is not to build a production operating system, but to gain a deep, practical understanding of how CPUs, memory, interrupts, and low‑level software actually work.
+mylexaproOS is a long-term learning project built entirely from scratch.
+Every commit is a working state.
+
+The goal isn't to ship a production OS.
+The goal is to genuinely understand how computers work at every level,
+from the first instruction the BIOS executes to memory allocation algorithms.
