@@ -8,10 +8,10 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.7.0 — Physical Memory Allocator
-
+## Current Version: v1.8.0 — Paging and Virtual Memory
+ 
 The operating system now includes:
-
+ 
 - Custom 512-byte boot sector with BIOS disk loading and E820 memory detection
 - GDT setup and full 16-bit → 32-bit protected mode transition
 - Freestanding C kernel loaded at 0x8000 with no libc or runtime support
@@ -23,15 +23,16 @@ The operating system now includes:
 - PIT timer driver with uptime counter displayed in top right corner
 - E820 memory map displayed at boot showing base, length, and type
 - First-fit physical memory allocator (kmalloc/kfree) with coalescing
+- **32-bit x86 paging enabled with identity-mapped kernel (first 4MB)**
+- **Page directory and page table built in C, CR3 loaded, CR0 PG bit set**
 - Proper linker segments, no RWX warnings, hardware cursor disabled
 - Makefile — single `make run` command to build and launch
-
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
-
+ 
 ---
-
+ 
 ## What I'm Learning
-
+ 
 - The complete boot process from power-on to kernel execution
 - How BIOS loads the first 512 bytes of a disk to 0x7C00
 - Real mode, protected mode, and the CPU privilege ring system
@@ -47,6 +48,9 @@ All components are written to be fully freestanding and do not rely on libc or B
 - Binary, hexadecimal, and memory addressing
 - Linker scripts, program headers, and segment permissions
 - How malloc and free work at the hardware level
+- How paging translates virtual addresses to physical addresses
+- Building page directories and page tables from scratch in C
+- Identity mapping, CR3, CR0, and the MMU
 - Testing bare-metal software using QEMU
 ---
 
@@ -69,12 +73,14 @@ memory.c        → Memory map reader and printer
 timer.h/.c      → PIT timer driver, tick counter, uptime display
 kmalloc.h       → heap allocator declarations and block_header struct
 kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
+paging.h        → paging declarations, flags, and function prototypes
+paging.c        → page directory and page table setup, CR3 load, paging enable
 ```
 
 ---
 
 ## Roadmap
-
+ 
 ### Completed
 - Boot sector, GDT, protected mode transition
 - C kernel execution at 0x8000
@@ -87,10 +93,10 @@ kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
 - PIT timer driver with uptime counter (IRQ 0)
 - Proper linker segments, no RWX warnings
 - First-fit physical memory allocator (kmalloc/kfree)
+- 32-bit paging enabled, kernel identity mapped, virtual memory active
 
 ### In Progress
 - Hardware IRQ expansion
-- Paging and virtual memory
 
 ### Planned
 - Kernel panic screen
@@ -99,10 +105,12 @@ kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
 - System calls
 - Filesystem (read files from disk)
 - Rust kernel modules
+
 ---
 
 ## Version History
 
+- v1.8.0 — paging enabled, identity mapped kernel, virtual memory active
 - v1.7.0 — first-fit memory allocator, kmalloc/kfree, heap at 1MB
 - v1.6.0 — PIT timer driver, uptime counter, IRQ0 active
 - v1.5.0 — E820 memory detection, proper linker segments, cursor disabled
@@ -120,9 +128,9 @@ kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
 
 ## Screenshots
 
-### v1.7.0 — Physical Memory Allocator
-![kmalloc](screenshots/v1.7.0-kmalloc.png)
-
+### v1.8.0 — Paging and Virtual Memory
+![paging](screenshots/v1.8.0-paging.png)
+ 
 Additional screenshots are available in the `screenshots/` directory.
 
 ---

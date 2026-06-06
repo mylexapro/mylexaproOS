@@ -16,20 +16,26 @@ Description:
 #include "memory.h"
 #include "timer.h"
 #include "kmalloc.h"
+#include "paging.h"
 
 void kmain(void) {
 	vga_clear();					// Clear screen
 	vga_disable_cursor();			// Disable BIOS cursor
 	idt_init();						// Set up interrupt descriptor table
 	timer_init();					// Set up timer
+	paging_init();					// Set up paging
 	pic_remap();					// Remap PIC to avoid CPU exception overlap
 	__asm__ __volatile__("sti");	// Enable interrupts
 
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	kprintf("          mylexaproOS  v1.7.0           \n");
+	kprintf("          mylexaproOS  v1.8.0           \n");
 	kprintf("       programming is my lexapro        \n");
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 	memory_print_map();
+
+	/* paging test */
+	kprintf("\nPaging ENABLED\n");
+
 	kprintf("\nPress any key...\n");
 
 	for (;;) {
