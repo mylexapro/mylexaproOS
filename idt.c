@@ -16,6 +16,7 @@ struct idt_ptr idtp;
 /* ISR handlers implemented in assembly */
 extern void isr0();
 extern void isr1();
+extern void isr14();
 extern void isr32();
 extern void isr33();
 
@@ -53,6 +54,7 @@ void idt_init(void) {
 	/* Install specific interrupt handlers */
 	idt_set_gate(0, (uint32_t)isr0, 0x08, 0x8E);
 	idt_set_gate(1, (uint32_t)isr1, 0x08, 0x8E);
+	idt_set_gate(14, (uint32_t)isr14, 0x08, 0x8E);
 	idt_set_gate(32, (uint32_t)isr32, 0x08, 0x8E);
 	idt_set_gate(33, (uint32_t)isr33, 0x08, 0x8E);
 

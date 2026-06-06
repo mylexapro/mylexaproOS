@@ -35,10 +35,12 @@ kernel.o: kernel.c vga.c vga.h kprintf.c kprintf.h
 	$(CC) $(CFLAGS) -c timer.c -o timer.o
 	$(CC) $(CFLAGS) -c kmalloc.c -o kmalloc.o
 	$(CC) $(CFLAGS) -c paging.c -o paging.o
+	$(CC) $(CFLAGS) -c panic.c -o panic.o
 
 # Link kernel into a 32-bit ELF at 0x8000
 kernel.elf: kernel.o
-	$(LD) -m  elf_i386 -T linker.ld -o kernel.elf kernel.o vga.o kprintf.o idt.o isr.o pic.o keyboard.o memory.o timer.o kmalloc.o paging.o
+	$(LD) -m  elf_i386 -T linker.ld -o kernel.elf kernel.o vga.o kprintf.o idt.o isr.o pic.o \
+	keyboard.o memory.o timer.o kmalloc.o paging.o panic.o
 
 # Convert ELF to raw binary
 kernel.bin: kernel.elf

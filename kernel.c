@@ -28,7 +28,7 @@ void kmain(void) {
 	__asm__ __volatile__("sti");	// Enable interrupts
 
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	kprintf("          mylexaproOS  v1.8.0           \n");
+	kprintf("          mylexaproOS  v1.9.0           \n");
 	kprintf("       programming is my lexapro        \n");
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 	memory_print_map();

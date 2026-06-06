@@ -8,10 +8,11 @@ This project exists to understand how computers actually work at the hardware an
 
 ---
 
-## Current Version: v1.8.0 — Paging and Virtual Memory
+## Current Version: v1.9.0 — Kernel Panic Handler
  
 The operating system now includes:
- 
+
+- Kernel panic handler with exception number, error code, and message display 
 - Custom 512-byte boot sector with BIOS disk loading and E820 memory detection
 - GDT setup and full 16-bit → 32-bit protected mode transition
 - Freestanding C kernel loaded at 0x8000 with no libc or runtime support
@@ -75,6 +76,8 @@ kmalloc.h       → heap allocator declarations and block_header struct
 kmalloc.c       → first-fit allocator, kmalloc() and kfree() implementation
 paging.h        → paging declarations, flags, and function prototypes
 paging.c        → page directory and page table setup, CR3 load, paging enable
+panic.h         → kernel panic declarations and function prototype
+panic.c         → panic screen, exception info display, CPU halt
 ```
 
 ---
@@ -82,6 +85,7 @@ paging.c        → page directory and page table setup, CR3 load, paging enable
 ## Roadmap
  
 ### Completed
+- Kernel panic handler with exception number and error code display
 - Boot sector, GDT, protected mode transition
 - C kernel execution at 0x8000
 - VGA text driver with cursor, backspace, and position control
@@ -99,7 +103,6 @@ paging.c        → page directory and page table setup, CR3 load, paging enable
 - Hardware IRQ expansion
 
 ### Planned
-- Kernel panic screen
 - Basic shell
 - Process management
 - System calls
@@ -110,6 +113,7 @@ paging.c        → page directory and page table setup, CR3 load, paging enable
 
 ## Version History
 
+- v1.9.0 — kernel panic handler, page fault caught, CPU halted with error display
 - v1.8.0 — paging enabled, identity mapped kernel, virtual memory active
 - v1.7.0 — first-fit memory allocator, kmalloc/kfree, heap at 1MB
 - v1.6.0 — PIT timer driver, uptime counter, IRQ0 active
@@ -128,8 +132,8 @@ paging.c        → page directory and page table setup, CR3 load, paging enable
 
 ## Screenshots
 
-### v1.8.0 — Paging and Virtual Memory
-![paging](screenshots/v1.8.0-paging.png)
+### v1.9.0 — Kernel Panic Handler
+![panic](screenshots/v1.9.0-panic.png)
  
 Additional screenshots are available in the `screenshots/` directory.
 
