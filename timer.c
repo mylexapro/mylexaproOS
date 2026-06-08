@@ -12,6 +12,7 @@ Description:
 #include "pic.h"
 #include "vga.h"
 #include "kprintf.h"
+#include "scheduler.h"
 
 /* tick counter - incremented every IRQ0 interrupt */
 volatile uint32_t timer_ticks = 0;
@@ -29,6 +30,8 @@ void timer_handler(void) {
     vga_print_at("Uptime: ", 70, 0, VGA_COLOR_PINK);
     vga_print_number_at(seconds, 78, 0, VGA_COLOR_PINK);
 
+    scheduler_tick();
+
     /* tell PIC we handled IRQ0 */
     pic_send_eoi(0);
 }
@@ -38,3 +41,4 @@ void timer_init(void) {
     /* IDT registration is handled in idt_init()
        this function is here for future PIT reprogramming */
 }
+

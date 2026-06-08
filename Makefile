@@ -25,6 +25,7 @@ boot.bin: boot.asm
 # Compile kernel + drivers + ISRs
 kernel.o: kernel.c vga.c vga.h kprintf.c kprintf.h
 	$(AS) -f elf32 isr.asm -o isr.o
+	$(AS) -f elf32 switch.asm -o switch.o
 	$(CC) $(CFLAGS) -c kernel.c -o kernel.o
 	$(CC) $(CFLAGS) -c vga.c -o vga.o
 	$(CC) $(CFLAGS) -c kprintf.c -o kprintf.o
@@ -36,11 +37,13 @@ kernel.o: kernel.c vga.c vga.h kprintf.c kprintf.h
 	$(CC) $(CFLAGS) -c kmalloc.c -o kmalloc.o
 	$(CC) $(CFLAGS) -c paging.c -o paging.o
 	$(CC) $(CFLAGS) -c panic.c -o panic.o
+	$(CC) $(CFLAGS) -c scheduler.c -o scheduler.o
+	$(CC) $(CFLAGS) -c process.c -o process.o
 
 # Link kernel into a 32-bit ELF at 0x8000
 kernel.elf: kernel.o
 	$(LD) -m  elf_i386 -T linker.ld -o kernel.elf kernel.o vga.o kprintf.o idt.o isr.o pic.o \
-	keyboard.o memory.o timer.o kmalloc.o paging.o panic.o
+	keyboard.o memory.o timer.o kmalloc.o paging.o panic.o switch.o scheduler.o process.o
 
 # Convert ELF to raw binary
 kernel.bin: kernel.elf

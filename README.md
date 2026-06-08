@@ -12,6 +12,10 @@ This project exists to understand how computers actually work at the hardware an
  
 The operating system now includes:
 
+- **Process Control Block (PCB) with saved CPU context, PID, and process state**
+- **Round-robin scheduler triggered on every IRQ0 timer tick**
+- **Low-level context switch in assembly — saves and restores full register state**
+- **Process creation with kmalloc-allocated per-process stack**
 - Kernel panic handler with exception number, error code, and message display 
 - Custom 512-byte boot sector with BIOS disk loading and E820 memory detection
 - GDT setup and full 16-bit → 32-bit protected mode transition
@@ -24,8 +28,8 @@ The operating system now includes:
 - PIT timer driver with uptime counter displayed in top right corner
 - E820 memory map displayed at boot showing base, length, and type
 - First-fit physical memory allocator (kmalloc/kfree) with coalescing
-- **32-bit x86 paging enabled with identity-mapped kernel (first 4MB)**
-- **Page directory and page table built in C, CR3 loaded, CR0 PG bit set**
+- 32-bit x86 paging enabled with identity-mapped kernel (first 4MB)
+- Page directory and page table built in C, CR3 loaded, CR0 PG bit set
 - Proper linker segments, no RWX warnings, hardware cursor disabled
 - Makefile — single `make run` command to build and launch
 All components are written to be fully freestanding and do not rely on libc or BIOS once in protected mode.
@@ -52,7 +56,12 @@ All components are written to be fully freestanding and do not rely on libc or B
 - How paging translates virtual addresses to physical addresses
 - Building page directories and page tables from scratch in C
 - Identity mapping, CR3, CR0, and the MMU
+- What a process is and how the OS creates the illusion of concurrency
+- Process Control Blocks, process states, and CPU context saving
+- Round-robin scheduling and preemptive multitasking
+- Low-level context switching in x86 assembly
 - Testing bare-metal software using QEMU
+
 ---
 
 ## Project Structure
@@ -78,6 +87,11 @@ paging.h        → paging declarations, flags, and function prototypes
 paging.c        → page directory and page table setup, CR3 load, paging enable
 panic.h         → kernel panic declarations and function prototype
 panic.c         → panic screen, exception info display, CPU halt
+process.h       → PCB struct, cpu_context, process states, function declarations
+process.c       → process table, process creation, context switch wrapper
+scheduler.h     → scheduler declarations
+scheduler.c     → round-robin scheduler, timer-driven process switching
+switch.asm      → low-level context save and restore in x86 assembly
 ```
 
 ---
@@ -98,21 +112,24 @@ panic.c         → panic screen, exception info display, CPU halt
 - Proper linker segments, no RWX warnings
 - First-fit physical memory allocator (kmalloc/kfree)
 - 32-bit paging enabled, kernel identity mapped, virtual memory active
+- Kernel panic handler with exception display and CPU halt
+- **Process Control Block, process states, cpu context struct**
+- **Round-robin scheduler hooked into IRQ0 timer**
+- **Context switch in x86 assembly, full register save and restore**
 
 ### In Progress
-- Hardware IRQ expansion
-
-### Planned
+- Multiple user processes
 - Basic shell
-- Process management
 - System calls
 - Filesystem (read files from disk)
+- Hardware IRQ expansion
 - Rust kernel modules
 
 ---
 
 ## Version History
 
+- v1.10.0 — process management, PCB, round-robin scheduler, context switching in assembly
 - v1.9.0 — kernel panic handler, page fault caught, CPU halted with error display
 - v1.8.0 — paging enabled, identity mapped kernel, virtual memory active
 - v1.7.0 — first-fit memory allocator, kmalloc/kfree, heap at 1MB
@@ -132,8 +149,8 @@ panic.c         → panic screen, exception info display, CPU halt
 
 ## Screenshots
 
-### v1.9.0 — Kernel Panic Handler
-![panic](screenshots/v1.9.0-panic.png)
+### v1.10.0 — Round-Robin Scheduler
+![scheduler](screenshots/v1.10.0-scheduler.png)
  
 Additional screenshots are available in the `screenshots/` directory.
 
