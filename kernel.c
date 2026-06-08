@@ -20,14 +20,6 @@ Description:
 #include "process.h"
 #include "scheduler.h"
 
-/* test process - prints A in a loop */
-void task_a(void) {
-	while (1) {
-		kprintf("A");
-		for (volatile int i = 0; i < 1000000; i++);
-	}
-}
-
 void kmain(void) {
 	vga_clear();					// Clear screen
 	vga_disable_cursor();			// Disable BIOS cursor
@@ -36,11 +28,10 @@ void kmain(void) {
 	paging_init();					// Set up paging
 	pic_remap();					// Remap PIC to avoid CPU exception overlap
 	process_init();
-	process_create(task_a);
 	__asm__ __volatile__("sti");	// Enable interrupts
 
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	kprintf("          mylexaproOS  v1.10.0          \n");
+	kprintf("          mylexaproOS  v1.10.1          \n");
 	kprintf("       programming is my lexapro        \n");
 	kprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 	memory_print_map();

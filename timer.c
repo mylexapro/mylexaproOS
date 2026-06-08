@@ -27,8 +27,8 @@ void timer_handler(void) {
     uint32_t seconds = timer_ticks / 18;
 
     /* save cursor position, print uptime, restore cursor */
-    vga_print_at("Uptime: ", 70, 0, VGA_COLOR_PINK);
-    vga_print_number_at(seconds, 78, 0, VGA_COLOR_PINK);
+    vga_print_at("Uptime:      ", 68, 0, VGA_COLOR_PINK);
+    vga_print_number_at(seconds, 76, 0, VGA_COLOR_PINK);
 
     scheduler_tick();
 
